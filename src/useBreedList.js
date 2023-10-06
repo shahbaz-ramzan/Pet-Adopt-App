@@ -1,12 +1,10 @@
 import { useState, useEffect } from "react";
-import useBreedList from "./UseBreedList";
 
 const localCache = {};
 
 export default function useBreedList(animal) {
   const [breedList, setBreedList] = useState([]);
   const [status, setStatus] = useState("unloaded");
-  const [breed] = useBreedList(animal);
 
   useEffect(() => {
     if (!animal) {
@@ -14,12 +12,12 @@ export default function useBreedList(animal) {
     } else if (localCache[animal]) {
       setBreedList(localCache[animal]);
     } else {
-      requestBreedList(animal);
+      requestBreedList();
     }
 
     async function requestBreedList() {
       setBreedList([]);
-      setStatus("loaded");
+      setStatus("loading");
       const res = await fetch(
         `http://pets-v2.dev-apis.com/breeds?animal=${animal}`
       );
@@ -29,5 +27,6 @@ export default function useBreedList(animal) {
       setStatus("loaded");
     }
   }, [animal]);
+
   return [breedList, status];
 }
